@@ -42,7 +42,7 @@ class AuthenticationService {
     //   _logger.e(response.error!.message);
     //   return null;
     // }
-    _logger.i(response.user);
+    // _logger.i(response.user);
     await _localStorageService.setItem('token', response.session!.accessToken);
     return await fetchUser(id: response.user!.id);
   }

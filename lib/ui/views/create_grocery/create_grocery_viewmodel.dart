@@ -28,8 +28,8 @@ class CreateGroceryViewModel extends FormViewModel {
     );
     setBusy(false);
 
-    if (response.error != null) {
-      _logger.e(response.error!.message);
+    if (response.data == null) {
+      _logger.e(response.data!.message);
       return;
     }
 

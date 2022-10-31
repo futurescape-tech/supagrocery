@@ -36,10 +36,10 @@ class GroceryDetailViewModel extends FutureViewModel<Grocery?> {
 
   Future<Grocery?> _fetchGrocery() async {
     final response = await _groceryService.fetchGroceryList(id: id);
-    _logger.i(response.toJson());
+    // _logger.i(response.toJson());
 
-    if (response.error != null) {
-      _logger.e(response.error!.message);
+    if (response.data == null) {
+      _logger.e(response.data);
       return null;
     }
 
@@ -61,15 +61,15 @@ class GroceryDetailViewModel extends FutureViewModel<Grocery?> {
         throwException: true,
       );
 
-      if (response.error != null) {
-        _logger.e(response.error!.message);
+      if (response.data == null) {
+        _logger.e(response.data);
         return null;
       }
 
       data!.groceryProducts!.removeWhere((element) => element.id == id);
       notifyListeners();
 
-      _logger.i(response.toJson());
+      // _logger.i(response.toJson());
     } catch (e) {
       _logger.e(e);
     }
@@ -79,8 +79,8 @@ class GroceryDetailViewModel extends FutureViewModel<Grocery?> {
     try {
       final response = await _groceryService.markProductChecked(payload: item);
 
-      if (response.error != null) {
-        _logger.e(response.error!.message);
+      if (response.data == null) {
+        _logger.e(response.data);
         return null;
       }
 

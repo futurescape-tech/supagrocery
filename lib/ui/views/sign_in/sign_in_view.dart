@@ -13,7 +13,7 @@ import 'sign_in_viewmodel.dart';
 
 @FormView(fields: [
   FormTextField(name: 'email'),
-  FormTextField(name: 'password', isPassword: true),
+  FormTextField(name: 'password'),
 ])
 class SignInView extends ViewModelBuilderWidget<SignInViewModel>
     with $SignInView {

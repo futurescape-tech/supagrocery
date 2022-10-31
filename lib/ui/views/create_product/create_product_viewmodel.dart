@@ -29,8 +29,8 @@ class CreateProductViewModel extends FormViewModel {
         ).toJson(),
       );
 
-      if (response.error != null) {
-        final errorMessage = response.error!.message;
+      if (response.data == null) {
+        final errorMessage = response.data!.message;
         _logger.e(errorMessage);
         _snackbarService.showSnackbar(
           title: 'Error',

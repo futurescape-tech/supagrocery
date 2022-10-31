@@ -19,7 +19,7 @@ abstract class SupabaseService<T> {
         .select()
         .eq('created_by', _authService.user!.id)
         .execute();
-    _logger.i(response.toJson());
+    
     return response;
   }
 
@@ -31,14 +31,14 @@ abstract class SupabaseService<T> {
         .eq('id', id)
         .single()
         .execute();
-    _logger.i(response.toJson());
+    
     return response;
   }
 
   Future<PostgrestResponse> create(Map<String, dynamic> json) async {
     _logger.i(tableName() + ' ' + json.toString());
     final response = await supabase.from(tableName()).insert(json).execute();
-    _logger.i(response.toJson());
+    
     return response;
   }
 
@@ -49,7 +49,7 @@ abstract class SupabaseService<T> {
     _logger.i(tableName() + ' ' + json.toString());
     final response =
         await supabase.from(tableName()).update(json).eq('id', id).execute();
-    _logger.i(response.toJson());
+    
     return response;
   }
 
@@ -57,7 +57,7 @@ abstract class SupabaseService<T> {
     _logger.i(tableName() + ' ' + id);
     final response =
         await supabase.from(tableName()).delete().eq('id', id).execute();
-    _logger.i(response.toJson());
+    
     return response;
   }
 }

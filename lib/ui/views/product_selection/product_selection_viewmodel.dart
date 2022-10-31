@@ -34,10 +34,10 @@ class ProductSelectionViewModel extends FutureViewModel<List<Product>?> {
 
   Future<List<Product>?> _fetchProducts() async {
     final response = await _productService.fetchProducts();
-    _logger.i(response.toJson());
+    // _logger.i(response.toJson());
 
-    if (response.error != null) {
-      _logger.e(response.error!.message);
+    if (response.data == null) {
+      _logger.e(response.data);
       return null;
     }
 
@@ -53,8 +53,8 @@ class ProductSelectionViewModel extends FutureViewModel<List<Product>?> {
     try {
       final response = await _productService.delete(id);
 
-      if (response.error != null) {
-        final errorMessage = response.error!.message;
+      if (response.data == null) {
+        final errorMessage = response.data;
         _snackbarService.showSnackbar(
           title: 'Error',
           message: errorMessage,
@@ -82,8 +82,8 @@ class ProductSelectionViewModel extends FutureViewModel<List<Product>?> {
       products: selectedProducts,
     );
 
-    if (response.error != null) {
-      _logger.e(response.error!.message);
+    if (response.data == null) {
+      // _logger.e(response.error!.message);
       return;
     }
 

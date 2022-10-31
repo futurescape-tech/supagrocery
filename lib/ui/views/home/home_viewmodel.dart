@@ -29,7 +29,7 @@ class HomeViewModel extends FutureViewModel<List<Grocery>> {
   Future<List<Grocery>> _fetchGroceryLists() async {
     final response = await _groceryService.all();
 
-    if (response.error != null) {
+    if (response.data == null) {
       return [];
     }
 
@@ -71,8 +71,7 @@ class HomeViewModel extends FutureViewModel<List<Grocery>> {
       setBusyForObject(id, true);
       final response = await _groceryService.delete(id);
 
-      if (response.error != null) {
-        _logger.e(response.error?.message);
+      if (response.data == null) {
         return;
       }
 

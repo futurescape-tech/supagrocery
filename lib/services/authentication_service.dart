@@ -36,7 +36,6 @@ class AuthenticationService {
 
   Future<void> initialize() async {
     final userId = await _localStorageService.getItem('user_id');
-    _logger.i(userId);
 
     if (userId == null) {
       return;
@@ -72,8 +71,8 @@ class AuthenticationService {
     final response =
         await supabase.auth.signUp(email: payload.email,password: payload.password);
 
-    if (response.user != null) {
-      _logger.e(response.user!.email);
+    if (response.user == null) {
+      // _logger.e(response.user!.email);
       return null;
       
     }
@@ -81,7 +80,7 @@ class AuthenticationService {
     final user = response.user!;
     _logger.i(user.toJson());
     await _createUser(user, payload);
-    await _localStorageService.setItem('token', response.session!.accessToken);
+    // await _localStorageService.setItem('token', response.session!.accessToken);
     await _localStorageService.setItem('user_id', response.user!.id);
     AppUser? appUser = await fetchUser(id: user.id);
     if (appUser != null) {
@@ -104,6 +103,7 @@ class AuthenticationService {
   }
 
   Future<AppUser?> fetchUser({required String id}) async {
+    print("id is ----------------- "+id.toString());
     final response = await supabase
         .from("app_users")
         .select()
@@ -115,8 +115,8 @@ class AuthenticationService {
       'Count: ${response.count}, Status: ${response.status}, Data: ${response.data}',
     );
 
-    if (response.data != null) {
-      _logger.e(response.data);
+    if (response.data == null) {
+      // _logger.e(response.data);
       return null;
     }
 
@@ -127,8 +127,8 @@ class AuthenticationService {
     return data;
   }
 
-  Future<PostgrestResponse> _createUser(User user, AuthDto payload) {
-    return supabase
+  Future<PostgrestResponse> _createUser(User user, AuthDto payload) async {
+    PostgrestResponse response = await supabase
         .from("app_users")
         .insert(
           AppUser(
@@ -136,7 +136,7 @@ class AuthenticationService {
             name: payload.name!,
             email: user.email.toString(),
           ),
-        )
-        .execute();
+        ).execute();
+    return response;
   }
 }

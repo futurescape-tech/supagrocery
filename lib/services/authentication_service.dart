@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:logger/logger.dart';
 import 'package:supabase/supabase.dart';
 import 'package:supagrocery/app/app.locator.dart';
@@ -13,23 +15,37 @@ class AuthenticationService {
   AppUser? get user => _user;
   bool get hasUser => _user != null;
 
+  // Future<void> initialize() async {
+  //   final accessToken = await _localStorageService.getItem('token');
+  //   _logger.i(accessToken);
+
+  //   if (accessToken == null) {
+  //     return;
+  //   }
+
+  //   final response = await supabase.auth.admin.getUserById(accessToken);
+
+  //   if (response.user != null) {
+  //     return;
+  //   }
+
+  //   final user = response.user!;
+  //   _logger.i(user.toJson());
+  //   await fetchUser(id: user.id);
+  // }
+
   Future<void> initialize() async {
-    final accessToken = await _localStorageService.getItem('token');
-    _logger.i(accessToken);
+    final userId = await _localStorageService.getItem('user_id');
+    _logger.i(userId);
 
-    if (accessToken == null) {
+    if (userId == null) {
       return;
     }
 
-    final response = await supabase.auth.admin.getUserById(accessToken);
-
-    if (response.user != null) {
-      return;
+    AppUser? appUser = await fetchUser(id: userId);
+    if (appUser != null) {
+      _localStorageService.setItem('user', jsonEncode(appUser.toJson()));
     }
-
-    final user = response.user!;
-    _logger.i(user.toJson());
-    await fetchUser(id: user.id);
   }
 
   Future<AppUser?> signIn({required AuthDto payload}) async {
@@ -44,7 +60,12 @@ class AuthenticationService {
     // }
     _logger.i(response.user);
     await _localStorageService.setItem('token', response.session!.accessToken);
-    return await fetchUser(id: response.user!.id);
+    await _localStorageService.setItem('user_id', response.user!.id);
+    AppUser? appUser = await fetchUser(id: response.user!.id);
+    if (appUser != null) {
+      _localStorageService.setItem('user', jsonEncode(appUser.toJson()));
+    }
+    return appUser;
   }
 
   Future<AppUser?> signUp({required AuthDto payload}) async {
@@ -61,7 +82,12 @@ class AuthenticationService {
     _logger.i(user.toJson());
     await _createUser(user, payload);
     await _localStorageService.setItem('token', response.session!.accessToken);
-    return await fetchUser(id: user.id);
+    await _localStorageService.setItem('user_id', response.user!.id);
+    AppUser? appUser = await fetchUser(id: user.id);
+    if (appUser != null) {
+      _localStorageService.setItem('user', jsonEncode(appUser.toJson()));
+    }
+    return appUser;
   }
 
   Future<void> signOut() async {
@@ -73,6 +99,7 @@ class AuthenticationService {
     // }
     // _logger.i(response.rawData);
     await _localStorageService.removeItem('token');
+    await _localStorageService.removeItem('user_id');
     return;
   }
 

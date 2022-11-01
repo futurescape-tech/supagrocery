@@ -33,7 +33,6 @@ class SignUpViewModel extends FormViewModel {
       );
 
       if (user == null) {
-        setError('Fill in all required fields.');
         _snackbarService.showSnackbar(
           title: 'Error',
           message: modelError,

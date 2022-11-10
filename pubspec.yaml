@@ -28,15 +28,15 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
 
-  stacked: ^2.1.0
-  stacked_services: ^0.8.5
+  stacked: ^3.0.0
+  stacked_services: ^0.9.7
   stacked_hooks: ^0.2.0
   stacked_themes: ^0.3.2
   logger:
-  google_fonts: ^2.0.0
-  supabase: ^0.0.1-dev.13
-  postgrest: ^0.1.0
-  form_validator: ^0.1.7
+  google_fonts: ^3.0.1
+  supabase: ^1.0.1
+  postgrest: ^1.0.1
+  form_validator: ^1.0.3
   freezed_annotation:
   json_serializable:
   json_annotation:

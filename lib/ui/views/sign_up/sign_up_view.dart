@@ -14,7 +14,7 @@ import 'sign_up_view.form.dart';
 @FormView(fields: [
   FormTextField(name: 'name'),
   FormTextField(name: 'email'),
-  FormTextField(name: 'password', isPassword: true),
+  FormTextField(name: 'password'),
 ])
 class SignUpView extends ViewModelBuilderWidget<SignUpViewModel>
     with $SignUpView {

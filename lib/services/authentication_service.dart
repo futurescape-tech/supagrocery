@@ -1,6 +1,5 @@
-import 'package:gotrue/src/user.dart';
 import 'package:logger/logger.dart';
-import 'package:postgrest/src/postgrest_response.dart';
+import 'package:supabase/supabase.dart';
 import 'package:supagrocery/app/app.locator.dart';
 import 'package:supagrocery/app/supabase_api.dart';
 import 'package:supagrocery/datamodels/application_models.dart';
@@ -22,56 +21,57 @@ class AuthenticationService {
       return;
     }
 
-    final response = await supabase.auth.api.getUser(accessToken);
+    final response = await supabase.auth.admin.getUserById(accessToken);
 
-    if (response.error != null) {
+    if (response.user != null) {
       return;
     }
 
-    final user = response.data!;
+    final user = response.user!;
     _logger.i(user.toJson());
     await fetchUser(id: user.id);
   }
 
   Future<AppUser?> signIn({required AuthDto payload}) async {
-    final response = await supabase.auth.signIn(
+    final response = await supabase.auth.signInWithPassword(
       email: payload.email,
       password: payload.password,
     );
 
-    if (response.error != null) {
-      _logger.e(response.error!.message);
-      return null;
-    }
-    _logger.i(response.data);
-    await _localStorageService.setItem('token', response.data!.accessToken);
-    return await fetchUser(id: response.data!.user!.id);
+    // if (response.error != null) {
+    //   _logger.e(response.error!.message);
+    //   return null;
+    // }
+    // _logger.i(response.user);
+    await _localStorageService.setItem('token', response.session!.accessToken);
+    return await fetchUser(id: response.user!.id);
   }
 
   Future<AppUser?> signUp({required AuthDto payload}) async {
     final response =
-        await supabase.auth.signUp(payload.email, payload.password);
+        await supabase.auth.signUp(email: payload.email,password: payload.password);
 
-    if (response.error != null) {
-      _logger.e(response.error!.message);
+    if (response.user != null) {
+      _logger.e(response.user!.email);
       return null;
+      
     }
 
-    final user = response.data!.user!;
+    final user = response.user!;
     _logger.i(user.toJson());
     await _createUser(user, payload);
-    await _localStorageService.setItem('token', response.data!.accessToken);
+    await _localStorageService.setItem('token', response.session!.accessToken);
     return await fetchUser(id: user.id);
   }
 
   Future<void> signOut() async {
     final response = await supabase.auth.signOut();
 
-    if (response.error != null) {
-      _logger.e(response.error!.message);
-      return;
-    }
-    _logger.i(response.rawData);
+    // if (response.user != null) {
+    //   _logger.e(response.error!.message);
+    //   return;
+    // }
+    // _logger.i(response.rawData);
     await _localStorageService.removeItem('token');
     return;
   }
@@ -88,8 +88,8 @@ class AuthenticationService {
       'Count: ${response.count}, Status: ${response.status}, Data: ${response.data}',
     );
 
-    if (response.error != null) {
-      _logger.e(response.error!.message);
+    if (response.data != null) {
+      _logger.e(response.data);
       return null;
     }
 
@@ -107,7 +107,7 @@ class AuthenticationService {
           AppUser(
             id: user.id,
             name: payload.name!,
-            email: user.email,
+            email: user.email.toString(),
           ),
         )
         .execute();
